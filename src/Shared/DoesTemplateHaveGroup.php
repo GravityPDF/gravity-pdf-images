@@ -73,7 +73,7 @@ class DoesTemplateHaveGroup {
 	 *
 	 * @param Model_Form_Settings $form_settings
 	 * @param Helper_Templates    $templates
-	 * @param \Monolog\Logger $log
+	 * @param \Monolog\Logger     $log
 	 *
 	 * @since 1.0
 	 */

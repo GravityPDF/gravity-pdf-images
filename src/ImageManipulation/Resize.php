@@ -169,7 +169,7 @@ class Resize implements Helper_Interface_Filters {
 		/* If Post Image, force into the correct format for image processing */
 		if ( $field->get_input_type() === 'post_image' ) {
 			$image_data = explode( '|:|', $files[0] );
-			$files[0] = $image_data[0];
+			$files[0]   = $image_data[0];
 		}
 
 		/* Convert Urls to local paths */
@@ -178,6 +178,7 @@ class Resize implements Helper_Interface_Filters {
 		}, $files );
 
 		/* Filter out non-images */
+
 		return array_filter( $paths, function( $path ) {
 			return $this->image_info->does_file_have_image_extension( $path );
 		} );

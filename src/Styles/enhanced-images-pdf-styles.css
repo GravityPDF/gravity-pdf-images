@@ -22,3 +22,9 @@
     width: 30.3%;
     padding: 0 1.5% 3%;
 }
+
+.fileupload-images-four-col .fileupload-images {
+    float: left;
+    width: 22%;
+    padding: 0 1.5% 3%;
+}

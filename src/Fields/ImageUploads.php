@@ -98,8 +98,8 @@ class ImageUploads extends Field_Fileupload {
 
 	/**
 	 * @return bool
-     *
-     * @since 0.1
+	 *
+	 * @since 0.1
 	 */
 	public function has_images() {
 		$uploads       = $this->value();
@@ -119,19 +119,25 @@ class ImageUploads extends Field_Fileupload {
 	 * @since 0.1
 	 */
 	public function html( $value = '', $label = true ) {
-		$uploads           = $this->value();
-		$image_uploads     = $this->get_images( $uploads );
-		$non_image_uploads = $this->get_non_images( $uploads );
+		$uploads             = $this->value();
+		$image_uploads       = $this->get_images( $uploads );
+		$non_image_uploads   = $this->get_non_images( $uploads );
+		$should_group_images = ( isset( $this->pdf_settings['group_uploaded_images'] ) ) ? $this->pdf_settings['group_uploaded_images'] : 'No';
 
-		/* Don't do anything if no images are included */
-		if ( count( $image_uploads ) === 0 ) {
+		/* Don't do anything if non images are included, but images are not */
+		if ( count( $non_image_uploads ) > 0 && count( $image_uploads ) === 0 ) {
 			return parent::html( $value, $label );
 		}
 
+		/* Don't display anything if we are grouping images and there is no non-images (handles "Show Empty Fields" edge case) */
+		if ( count( $non_image_uploads ) === 0 && count( $image_uploads ) > 0 && $should_group_images === 'Yes' ) {
+			return '';
+		}
+
+		/* Generate images and non-images markup */
 		$html = '';
 		$html .= $this->get_non_image_html( $non_image_uploads );
 
-		$should_group_images = ( isset( $this->pdf_settings['group_uploaded_images'] ) ) ? $this->pdf_settings['group_uploaded_images'] : 'No';
 		if ( $should_group_images === 'No' ) {
 			$html .= $this->get_image_html( $image_uploads );
 		}
@@ -268,6 +274,10 @@ class ImageUploads extends Field_Fileupload {
 			case '3 Column':
 				$img_format_css = 'fileupload-images-three-col';
 			break;
+
+            case '4 Column':
+	            $img_format_css = 'fileupload-images-four-col';
+            break;
 
 			default:
 				$img_format_css = 'fileupload-images-one-col';

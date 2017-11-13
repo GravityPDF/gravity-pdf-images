@@ -119,6 +119,7 @@ class AddFields implements Helper_Interface_Filters {
 					'1 Column' => '<img src="' . plugin_dir_url( GFPDF_PDF_IMAGES_FILE ) . 'assets/images/image-single-column.png" width="75" alt="' . esc_html__( '1 Column', 'gravity-pdf-images' ) . '" />',
 					'2 Column' => '<img src="' . plugin_dir_url( GFPDF_PDF_IMAGES_FILE ) . 'assets/images/image-two-column.png" width="75" alt="' . esc_html__( '2 Columns', 'gravity-pdf-images' ) . '" />',
 					'3 Column' => '<img src="' . plugin_dir_url( GFPDF_PDF_IMAGES_FILE ) . 'assets/images/image-three-column.png" width="75" alt="' . esc_html__( '3 Columns', 'gravity-pdf-images' ) . '" />',
+					'4 Column' => '<img src="' . plugin_dir_url( GFPDF_PDF_IMAGES_FILE ) . 'assets/images/image-four-column.png" width="75" alt="' . esc_html__( '4 Columns', 'gravity-pdf-images' ) . '" />',
 				],
 				'std'     => '1 Column',
 				'class'   => 'image-radio-buttons',

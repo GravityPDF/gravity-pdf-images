@@ -195,6 +195,10 @@ class PostImageUploads extends Field_Post_Image {
 				$img_format_css = 'fileupload-images-three-col';
 			break;
 
+			case '4 Column':
+				$img_format_css = 'fileupload-images-four-col';
+			break;
+
 			default:
 				$img_format_css = 'fileupload-images-one-col';
 			break;
