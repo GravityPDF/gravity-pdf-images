@@ -87,8 +87,8 @@ class DisplayImages implements Helper_Interface_Actions, Helper_Interface_Filter
 	 * @since 0.1
 	 */
 	public function add_actions() {
-		add_action( 'gfpdf_pre_html_fields', [ $this, 'save_settings' ], 10, 2 );
-		add_action( 'gfpdf_post_html_fields', [ $this, 'reset_settings' ], 10, 2 );
+		add_action( 'gfpdf_pre_pdf_generation', [ $this, 'save_settings' ], 10, 3 );
+		add_action( 'gfpdf_post_pdf_generation', [ $this, 'reset_settings' ], 10 );
 
 		add_action( 'gfpdf_post_html_fields', [ $this, 'maybe_group_images' ], 5, 2 );
 	}
@@ -103,13 +103,14 @@ class DisplayImages implements Helper_Interface_Actions, Helper_Interface_Filter
 	/**
 	 * Save the PDF Settings for later use
 	 *
+	 * @param array $form
 	 * @param array $entry
 	 * @param array $settings
 	 *
 	 * @since 0.1
 	 */
-	public function save_settings( $entry, $settings ) {
-		$this->settings = $settings['settings'];
+	public function save_settings( $form, $entry, $settings ) {
+		$this->settings = $settings;
 	}
 
 	/**

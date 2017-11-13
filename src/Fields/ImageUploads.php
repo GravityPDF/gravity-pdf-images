@@ -97,6 +97,39 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
+	 * @since 0.1
+	 */
+	public function form_data() {
+		if ( $this->has_images() ) {
+			$image_uploads = $this->get_images( $this->value() );
+
+			$field_id = $this->field->id;
+			$data     = [];
+
+			foreach ( $image_uploads as $file ) {
+				$path               = $this->misc->convert_url_to_path( $file );
+				$resized_image_path = ( $path !== false ) ? $this->image_info->get_image_resized_filepath( $path ) : false;
+
+				if ( is_file( $resized_image_path ) ) {
+					$resized_image_url = $this->image_info->get_image_resized_filepath( $file );
+
+					$data[ $field_id ] = [
+						'url'  => $resized_image_url,
+						'path' => $resized_image_path,
+					];
+				}
+			}
+
+			return array_merge(
+				parent::form_data(),
+				[ 'images' => $data ]
+			);
+		}
+
+		return parent::form_data();
+	}
+
+	/**
 	 * @return bool
 	 *
 	 * @since 0.1
@@ -275,9 +308,9 @@ class ImageUploads extends Field_Fileupload {
 				$img_format_css = 'fileupload-images-three-col';
 			break;
 
-            case '4 Column':
-	            $img_format_css = 'fileupload-images-four-col';
-            break;
+			case '4 Column':
+				$img_format_css = 'fileupload-images-four-col';
+			break;
 
 			default:
 				$img_format_css = 'fileupload-images-one-col';

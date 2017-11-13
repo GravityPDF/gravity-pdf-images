@@ -2,6 +2,7 @@
 
 namespace GFPDF\Plugins\Images;
 
+use GFPDF\Plugins\Images\Options\FormData;
 use GFPDF\Plugins\Images\Shared\DoesTemplateHaveGroup;
 use GFPDF\Plugins\Images\Shared\ImageInfo;
 use GFPDF\Plugins\Images\Options\AddFields as EnhancedImagesAddFields;
@@ -76,6 +77,7 @@ class Bootstrap extends Helper_Abstract_Addon {
 			new Resize( new ImageInfo() ),
 			new DisplayImages( new ImageInfo() ),
 			new ImagesAddStyles(),
+			new FormData(),
 		] );
 
 		/* Run the setup */

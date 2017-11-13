@@ -117,6 +117,36 @@ class PostImageUploads extends Field_Post_Image {
 	}
 
 	/**
+	 * @since 0.1
+	 */
+	public function form_data() {
+		if ( $this->has_images() ) {
+			$image = $this->value();
+
+			$field_id = $this->field->id;
+			$data     = [];
+
+			$resized_image_path = $this->image_info->get_image_resized_filepath( $image['path'] );
+
+			if ( is_file( $resized_image_path ) ) {
+				$resized_image_url = $this->image_info->get_image_resized_filepath( $image['url'] );
+
+				$data[ $field_id ] = [
+					'url'  => $resized_image_url,
+					'path' => $resized_image_path,
+				];
+
+				return array_merge(
+					parent::form_data(),
+					[ 'images' => $data ]
+				);
+			}
+		}
+
+		return parent::form_data();
+	}
+
+	/**
 	 * @return bool
 	 *
 	 * @since 0.1
