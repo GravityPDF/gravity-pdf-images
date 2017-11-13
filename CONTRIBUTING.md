@@ -1,6 +1,6 @@
 # Contributions to Gravity PDF
 
-You are more than welcome to create a pull request and contribute to Gravity PDF, but before you do we recommend you [open a new issue on GitHub / check if there is an existing ticket](https://github.com/GravityPDF/gravity-pdf-core-booster/issues) and discuss your use-case beforehand.
+You are more than welcome to create a pull request and contribute to Gravity PDF, but before you do we recommend you [open a new issue on GitHub / check if there is an existing ticket](https://github.com/GravityPDF/gravity-pdf-images/issues) and discuss your use-case beforehand.
 
 ## Guidelines
 
