@@ -1,0 +1,22 @@
+{
+  "name": "gravity-pdf/images",
+  "type": "project",
+  "license": "GPLv2",
+  "config": {
+    "preferred-install": "dist",
+    "autoloader-suffix": "GravityPDFImagesAddon"
+  },
+  "require": {
+    "php": ">=5.4",
+    "claviska/SimpleImage": "~2.7"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "adlawson/vfs": "^0.12.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "GFPDF\\Plugins\\Images\\": "src/"
+    }
+  }
+}
