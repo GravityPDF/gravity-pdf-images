@@ -19,7 +19,7 @@ The `development` branch is considered our bleeding edge branch, with all new ch
 
 Before beginning, ensure you have [Git](https://git-scm.com/) and [Composer](https://getcomposer.org/) installed and their commands are globally accessible via the command line.
 
-1. Clone the repository using `git clone https://github.com/GravityPDF/gravity-pdfimages/`
+1. Clone the repository using `git clone https://github.com/GravityPDF/gravity-pdf-images/`
 1. Open your terminal / command prompt to the Gravity PDF Images root directory and run `composer install`
 1. Copy the plugin to your WordPress plugin directory (if not there already) and active through your WordPress admin area
 
