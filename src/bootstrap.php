@@ -2,13 +2,14 @@
 
 namespace GFPDF\Plugins\Images;
 
-use GFPDF\Plugins\Images\Options\FormData;
+use GFPDF\Plugins\Images\Features\FormData;
+use GFPDF\Plugins\Images\Options\GlobalSettings;
 use GFPDF\Plugins\Images\Shared\DoesTemplateHaveGroup;
 use GFPDF\Plugins\Images\Shared\ImageInfo;
-use GFPDF\Plugins\Images\Options\AddFields as EnhancedImagesAddFields;
+use GFPDF\Plugins\Images\Options\AddFields;
 use GFPDF\Plugins\Images\ImageManipulation\Resize;
-use GFPDF\Plugins\Images\Options\DisplayImages;
-use GFPDF\Plugins\Images\Styles\AddStyles as ImagesAddStyles;
+use GFPDF\Plugins\Images\Features\DisplayImages;
+use GFPDF\Plugins\Images\Styles\AddStyles;
 
 use GFPDF\Helper\Licensing\EDD_SL_Plugin_Updater;
 use GFPDF\Helper\Helper_Abstract_Addon;
@@ -70,14 +71,19 @@ class Bootstrap extends Helper_Abstract_Addon {
 	 */
 	public function init( $classes = [] ) {
 		/* Create new intances of the plugin's classes */
-		$group_checker = new DoesTemplateHaveGroup( GPDFAPI::get_mvc_class( 'Model_Form_Settings' ), GPDFAPI::get_templates_class(), $this->log );
+		$options = GPDFAPI::get_options_class();
+		$options->set_plugin_settings();
+
+		$group_checker    = new DoesTemplateHaveGroup( GPDFAPI::get_mvc_class( 'Model_Form_Settings' ), GPDFAPI::get_templates_class(), $this->log );
+		$image_constraint = $options->get_option( 'uploaded_images_constrained_image_size', 1000 );
 
 		$classes = array_merge( $classes, [
-			new EnhancedImagesAddFields( $group_checker ),
-			new Resize( new ImageInfo() ),
+			new AddFields( $group_checker ),
+			new Resize( new ImageInfo(), $image_constraint ),
 			new DisplayImages( new ImageInfo() ),
-			new ImagesAddStyles(),
+			new AddStyles(),
 			new FormData(),
+			new GlobalSettings(),
 		] );
 
 		/* Run the setup */

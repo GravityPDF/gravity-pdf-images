@@ -2,7 +2,7 @@
 
 namespace GFPDF\Tests\EnhancedImages;
 
-use GFPDF\Plugins\Images\Options\DisplayImages;
+use GFPDF\Plugins\Images\Features\DisplayImages;
 use GFPDF\Plugins\Images\Shared\ImageInfo;
 use WP_UnitTestCase;
 

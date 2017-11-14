@@ -2,7 +2,7 @@
 
 namespace GFPDF\Tests\EnhancedImages;
 
-use GFPDF\Plugins\Images\Options\AddFields;
+use GFPDF\Plugins\Images\Features\AddFields;
 use GFPDF\Plugins\Images\Shared\DoesTemplateHaveGroup;
 
 use GPDFAPI;

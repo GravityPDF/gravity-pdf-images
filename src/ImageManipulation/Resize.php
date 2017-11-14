@@ -55,14 +55,23 @@ class Resize implements Helper_Interface_Filters {
 	protected $image_info;
 
 	/**
-	 * Resize constructor.
-	 *
-	 * @param ImageInfo $image_info
+	 * @var int
 	 *
 	 * @since 0.1
 	 */
-	public function __construct( ImageInfo $image_info ) {
+	protected $constraint;
+
+	/**
+	 * Resize constructor.
+	 *
+	 * @param ImageInfo $image_info
+	 * @param int       $constraint
+	 *
+	 * @since 0.1
+	 */
+	public function __construct( ImageInfo $image_info, $constraint = 1000 ) {
 		$this->image_info = $image_info;
+		$this->constraint = $constraint;
 	}
 
 	/**
@@ -144,7 +153,7 @@ class Resize implements Helper_Interface_Filters {
 
 		try {
 			$img = new SimpleImage( $path );
-			$img->best_fit( 1000, 1000 )
+			$img->best_fit( $this->constraint, $this->constraint )
 			    ->auto_orient()
 			    ->save( $resize_image_path );
 

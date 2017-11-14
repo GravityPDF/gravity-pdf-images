@@ -98,6 +98,10 @@ class PostImageUploads extends Field_Post_Image {
 			$html .= $this->get_image_html( $image );
 		}
 
+		if ( $should_group_images === 'Yes' ) {
+			return '';
+		}
+
 		return Helper_Abstract_Fields::html( $html );
 	}
 

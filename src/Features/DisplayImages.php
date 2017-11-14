@@ -1,6 +1,6 @@
 <?php
 
-namespace GFPDF\Plugins\Images\Options;
+namespace GFPDF\Plugins\Images\Features;
 
 use GFPDF\Helper\Helper_Field_Container;
 use GFPDF\Plugins\Images\Shared\ImageInfo;
@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class DisplayImages
  *
- * @package GFPDF\Plugins\Images\Options
+ * @package GFPDF\Plugins\Images\Features
  */
 class DisplayImages implements Helper_Interface_Actions, Helper_Interface_Filters {
 

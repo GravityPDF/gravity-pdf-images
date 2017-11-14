@@ -37,11 +37,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 */
 
 /**
- * Class FormData
+ * Class GlobalSettings
  *
  * @package GFPDF\Plugins\Images\Options
  */
-class FormData implements Helper_Interface_Filters {
+class GlobalSettings implements Helper_Interface_Filters {
+
 
 	/**
 	 * Initialise our module
@@ -56,26 +57,39 @@ class FormData implements Helper_Interface_Filters {
 	 * @since 0.1
 	 */
 	public function add_filters() {
-		add_filter( 'gfpdf_form_data', [ $this, 'add_image_order_key' ] );
+		add_filter( 'gfpdf_settings_extensions', [ $this, 'add_global_settings' ] );
 	}
 
 	/**
-	 * Put the `images` key at the end of the form_data array
+	 * Add global extension settings
 	 *
-	 * @param array $form_data
+	 * @param array $settings
 	 *
 	 * @return array
 	 *
 	 * @since 0.1
 	 */
-	public function add_image_order_key( $form_data ) {
-		if ( isset( $form_data['images'] ) ) {
-			$images = $form_data['images'];
-			unset( $form_data['images'] );
+	public function add_global_settings( $settings ) {
 
-			$form_data['images'] = $images;
-		}
+		$settings['uploaded_images_desc'] = [
+			'id'    => 'uploaded_images_desc',
+			'type'  => 'descriptive_text',
+			'desc'  => '<h4 class="section-title">' . esc_html__( 'Images', 'gravity-forms-images' ) . '</h4>',
+			'class' => 'gfpdf-no-padding',
+		];
 
-		return $form_data;
+		$settings['uploaded_images_constrained_image_size'] = [
+			'id'      => 'uploaded_images_constrained_image_size',
+			'name'    => esc_html__( 'Constrained Image Size', 'gravity-pdf-images' ),
+			'desc'    => esc_html__( 'Changing the size only effects newly-uploaded images.', 'gravity-pdf-images' ),
+			'desc2'   => 'px',
+			'type'    => 'number',
+			'size'    => 'small',
+			'std'     => '1000',
+			'tooltip' => '<h6>' . esc_html__( 'Constrained Image Size', 'gravity-forms-images' ) . '</h6>' . esc_html__( 'Uploaded images will be resized and have the width and height constrained. For better image quality increase the value, and for smaller file sizes decrease the value.', 'gravity-forms-images' ),
+		];
+
+		return $settings;
 	}
+
 }
