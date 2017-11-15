@@ -75,7 +75,7 @@ class PreviewerPlaceholders implements Helper_Interface_Filters {
 	 * @since 0.1
 	 */
 	public function add_filters() {
-		add_filter( 'gfpdf_field_value', [ $this, 'maybe_override_images_when_using_previewer' ], 100, 5 );
+		add_filter( 'gfpdf_field_value', [ $this, 'maybe_override_images_when_using_previewer' ], 10, 5 );
 	}
 
 	/**
