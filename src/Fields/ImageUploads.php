@@ -79,6 +79,10 @@ class ImageUploads extends Field_Fileupload {
 		$this->pdf_settings = $settings;
 	}
 
+	public function get_pdf_settings() {
+	    return $this->pdf_settings;
+    }
+
 	/**
 	 * @return bool
 	 *

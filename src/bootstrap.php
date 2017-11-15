@@ -3,6 +3,7 @@
 namespace GFPDF\Plugins\Images;
 
 use GFPDF\Plugins\Images\Features\FormData;
+use GFPDF\Plugins\Images\Features\PreviewerPlaceholders;
 use GFPDF\Plugins\Images\Options\GlobalSettings;
 use GFPDF\Plugins\Images\Shared\DoesTemplateHaveGroup;
 use GFPDF\Plugins\Images\Shared\ImageInfo;
@@ -84,6 +85,7 @@ class Bootstrap extends Helper_Abstract_Addon {
 			new AddStyles(),
 			new FormData(),
 			new GlobalSettings(),
+			new PreviewerPlaceholders( new ImageInfo() )
 		] );
 
 		/* Run the setup */

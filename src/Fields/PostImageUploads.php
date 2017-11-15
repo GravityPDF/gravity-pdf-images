@@ -79,6 +79,10 @@ class PostImageUploads extends Field_Post_Image {
 		$this->pdf_settings = $settings;
 	}
 
+	public function get_pdf_settings() {
+		return $this->pdf_settings;
+	}
+
 	/**
 	 * Include all checkbox options in the list and tick the ones that were selected
 	 *
