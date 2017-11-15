@@ -28,13 +28,7 @@ rm -R ${PACKAGE_DIR}/node_modules
 FILES=(
 "${PACKAGE_DIR}/composer.json"
 "${PACKAGE_DIR}/composer.lock"
-"${PACKAGE_DIR}/package.json"
-"${PACKAGE_DIR}/yarn.lock"
 "${PACKAGE_DIR}/gulpfile.js"
-"${PACKAGE_DIR}/.babelrc"
-"${PACKAGE_DIR}/.eslintrc"
-"${PACKAGE_DIR}/karma.conf.js"
-"${PACKAGE_DIR}/webpack.config.js"
 )
 
 for i in "${FILES[@]}"
