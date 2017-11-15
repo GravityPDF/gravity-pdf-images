@@ -52,8 +52,6 @@ class PreviewerPlaceholders implements Helper_Interface_Filters {
 	protected $image_info;
 
 	/**
-	 * Resize constructor.
-	 *
 	 * @param ImageInfo $image_info
 	 *
 	 * @since 0.1
@@ -80,12 +78,13 @@ class PreviewerPlaceholders implements Helper_Interface_Filters {
 
 	/**
 	 * Replace images with placeholders when generating PDFs for Previewer.
-	 * This is needed because images haven't been resized yet and can cause resource overload attempting to use them.
+	 * This is needed because images haven't been resized yet and can cause resource overload attempting to use the full-
+	 * sized images.
 	 *
 	 * @param string $value
 	 * @param object $field
-	 * @param array $entry
-	 * @param array $form
+	 * @param array  $entry
+	 * @param array  $form
 	 * @param object $pdf_field
 	 *
 	 * @return string
@@ -99,7 +98,8 @@ class PreviewerPlaceholders implements Helper_Interface_Filters {
 
 		/*
 		 * Ensure this is a REST request and that the settings method in our PDF field class exists
-		 * Note: only the special Image PDF field classes include these PDF settings methods right now
+		 * Note: right now only the special Image PDF field classes include these PDF settings methods so we need to check
+		 * they exist
 		 */
 		if ( ! $prevent_placeholder && isset( $GLOBALS['wp']->query_vars['rest_route'] ) && method_exists( $pdf_field, 'get_pdf_settings' ) ) {
 			$settings = $pdf_field->get_pdf_settings();
@@ -113,10 +113,10 @@ class PreviewerPlaceholders implements Helper_Interface_Filters {
 				/* Prepare multi-upload and single upload fields to be in the same format */
 				$field_files_array = ( $field->multipleFiles ) ? (array) json_decode( stripslashes( $value ), true ) : [ $value ];
 
+				/* Replace all image references with a placeholder */
 				foreach ( $field_files_array as $key => $field_files ) {
-					/* Replace the image references with a placeholder */
 					if ( $this->image_info->does_file_have_image_extension( $field_files ) ) {
-						$field_files_array[ $key ] = plugins_url( '/assets/images/placeholder.png', GFPDF_PDF_IMAGES_FILE );
+						$field_files_array[ $key ] = plugin_dir_url( GFPDF_PDF_IMAGES_FILE ) . 'assets/images/placeholder.png';
 					}
 				}
 

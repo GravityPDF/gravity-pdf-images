@@ -44,42 +44,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ImageInfo {
 
 	/**
-	 * @param string $path
+	 * Get the image resized filepath
+	 *
+	 * @Internal All resized images include an md5 hash that's shortened 6 characters
+	 *
+	 * @param string $image Can be an absolute path, URL or file stream (i.e vfs://path/to/image.jpg)
 	 *
 	 * @return string
 	 *
-	 * @since 1.0
+	 * @since    1.0
 	 */
-	public function get_image_resized_filepath( $path ) {
+	public function get_image_resized_filepath( $image ) {
 
-		$file_info = pathinfo( $path );
+		$file_info = pathinfo( $image );
+		$dirname   = $file_info['dirname'];
 
-		/* Handle both absolute paths and file streams (i.e vfs://path/to/image.jpg) */
-		$dirname = $file_info['dirname'];
-		$hash    = substr( md5( $file_info['filename'] ), 0, 6 );
+		/* Calculate the resized image hash */
+		$hash = substr( md5( $file_info['filename'] ), 0, 6 );
 
-		$virtual_fs = substr( $path, 0, strlen( $file_info['dirname'] ) + 2 ) === substr( $file_info['dirname'], 0, -1 ) . '://';
+		/* Correctly handle stream dirnames when building the resized image filepath */
+		$virtual_fs = substr( $image, 0, strlen( $file_info['dirname'] ) + 2 ) === substr( $file_info['dirname'], 0, -1 ) . '://';
 		$dirname    .= ( $virtual_fs ) ? '//' : '/';
 
+		/* Return the resized image filepath */
 		return $dirname . $file_info['filename'] . '-resized-' . $hash . '.' . $file_info['extension'];
 	}
 
-	public function get_image_name( $path ) {
-		return pathinfo( $path, PATHINFO_BASENAME );
+	/**
+	 * Return the current image name
+	 *
+	 * @param $image Can be an absolute path, URL or file stream (i.e vfs://path/to/image.jpg)
+	 *
+	 * @return string
+	 *
+	 * @since 0.1
+	 */
+	public function get_image_name( $image ) {
+		return pathinfo( $image, PATHINFO_BASENAME );
 	}
 
-
 	/**
-	 * @param string $path
+	 * Check if the file contains an aloud image extension
+	 *
+	 * @param string $file Can be an absolute path, URL or file stream (i.e vfs://path/to/image.jpg)
 	 *
 	 * @return bool
 	 *
 	 * @since 1.0
 	 */
-	public function does_file_have_image_extension( $path ) {
+	public function does_file_have_image_extension( $file ) {
 		$allowed_extensions = [ 'jpg', 'jpeg', 'gif', 'png' ];
 
-		if ( in_array( strtolower( pathinfo( $path, PATHINFO_EXTENSION ) ), $allowed_extensions ) ) {
+		if ( in_array( strtolower( pathinfo( $file, PATHINFO_EXTENSION ) ), $allowed_extensions ) ) {
 			return true;
 		}
 
@@ -87,7 +103,9 @@ class ImageInfo {
 	}
 
 	/**
-	 * @param $url
+	 * Returns what should be the file path
+	 *
+	 * @param $url The file URL
 	 *
 	 * @return string
 	 *

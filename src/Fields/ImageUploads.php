@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 */
 
 /**
- * Controls the display and output of the Checkbox HTML
+ * Controls the display and output of the File Upload field
  *
  * @since 0.1
  */
@@ -55,13 +55,15 @@ class ImageUploads extends Field_Fileupload {
 	protected $image_info;
 
 	/**
-	 * @var array
+	 * @var array The current Gravity PDF settings
 	 *
 	 * @since 0.1
 	 */
 	protected $pdf_settings;
 
 	/**
+	 * image_info Setter
+	 *
 	 * @param ImageInfo $image_info
 	 *
 	 * @since 0.1
@@ -71,6 +73,8 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
+	 * pdf_settings Setter
+	 *
 	 * @param $settings
 	 *
 	 * @since 0.1
@@ -79,11 +83,21 @@ class ImageUploads extends Field_Fileupload {
 		$this->pdf_settings = $settings;
 	}
 
+	/**
+	 * pdf_settings Getter
+	 *
+	 * @return array
+	 *
+	 * @since 0.1
+	 */
 	public function get_pdf_settings() {
-	    return $this->pdf_settings;
-    }
+		return $this->pdf_settings;
+	}
 
 	/**
+	 * Mark field as empty if the Group Images setting is enabled and there are no non-image uploads. Otherwise, let the
+	 * parent class determine if the field is empty.
+	 *
 	 * @return bool
 	 *
 	 * @since 0.1
@@ -101,6 +115,11 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
+	 * If the field has uploaded images and they've been resized already we'll include the resized image URL and path
+	 * in the $form_data['images'] array.
+	 *
+	 * @return array
+	 *
 	 * @since 0.1
 	 */
 	public function form_data() {
@@ -114,6 +133,7 @@ class ImageUploads extends Field_Fileupload {
 				$path               = $this->misc->convert_url_to_path( $file );
 				$resized_image_path = ( $path !== false ) ? $this->image_info->get_image_resized_filepath( $path ) : false;
 
+				/* Only include the new form_data info if the resized image exists */
 				if ( is_file( $resized_image_path ) ) {
 					$resized_image_url = $this->image_info->get_image_resized_filepath( $file );
 
@@ -124,16 +144,20 @@ class ImageUploads extends Field_Fileupload {
 				}
 			}
 
+			/* Merge the new `image` data with this fields standard form_data */
 			return array_merge(
 				parent::form_data(),
 				[ 'images' => $data ]
 			);
 		}
 
+		/* No images uploaded so let the parent class handle the output */
 		return parent::form_data();
 	}
 
 	/**
+	 * Determine if an image was uploaded for this field
+	 *
 	 * @return bool
 	 *
 	 * @since 0.1
@@ -146,7 +170,7 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
-	 * Include all checkbox options in the list and tick the ones that were selected
+	 * Handle the field's HTML output for both images and non-images.
 	 *
 	 * @param string $value
 	 * @param bool   $label
@@ -161,12 +185,12 @@ class ImageUploads extends Field_Fileupload {
 		$non_image_uploads   = $this->get_non_images( $uploads );
 		$should_group_images = ( isset( $this->pdf_settings['group_uploaded_images'] ) ) ? $this->pdf_settings['group_uploaded_images'] : 'No';
 
-		/* Don't do anything if non images are included, but images are not */
-		if ( count( $non_image_uploads ) > 0 && count( $image_uploads ) === 0 ) {
+		/* Let the parent class handle the output if no images have been uploaded */
+		if ( count( $image_uploads ) === 0 ) {
 			return parent::html( $value, $label );
 		}
 
-		/* Don't display anything if we are grouping images and there is no non-images (handles "Show Empty Fields" edge case) */
+		/* Don't display any content if images are grouped at the end of the document and there's no non-images uploaded (handles "Show Empty Fields" edge case) */
 		if ( count( $non_image_uploads ) === 0 && count( $image_uploads ) > 0 && $should_group_images === 'Yes' ) {
 			return '';
 		}
@@ -183,7 +207,7 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
-	 * Only output uploaded images, which is used to group them at the end of a PDF
+	 * Generate the field's image-only markup (used when the Group Images setting is enabled)
 	 *
 	 * @return string
 	 *
@@ -199,7 +223,9 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
-	 * @param $uploads
+	 * Returns an array containing the URL to all uploaded images
+	 *
+	 * @param array $uploads
 	 *
 	 * @return array
 	 *
@@ -212,6 +238,8 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
+	 * Returns an array containing the URL to all uploaded non-images
+	 *
 	 * @param $uploads
 	 *
 	 * @return array
@@ -225,6 +253,8 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
+	 * Returns the markup used to display non-images
+	 *
 	 * @param $uploads
 	 *
 	 * @return string
@@ -253,6 +283,8 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
+	 * Returns the markup used to display images
+	 *
 	 * @param $uploads
 	 *
 	 * @return string
@@ -296,12 +328,13 @@ class ImageUploads extends Field_Fileupload {
 	}
 
 	/**
+	 * Get the correct CSS class name based on the Image Format setting
+	 *
 	 * @return string
 	 *
 	 * @since 0.1
 	 */
 	protected function get_image_column_class() {
-		/* Determine how the images should be displayed */
 		$img_format = ( isset( $this->pdf_settings['display_uploaded_images_format'] ) ) ? $this->pdf_settings['display_uploaded_images_format'] : '1 Column';
 		switch ( $img_format ) {
 			case '2 Column':

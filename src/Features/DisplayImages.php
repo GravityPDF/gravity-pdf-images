@@ -63,8 +63,6 @@ class DisplayImages implements Helper_Interface_Actions, Helper_Interface_Filter
 	private $settings;
 
 	/**
-	 * Resize constructor.
-	 *
 	 * @param ImageInfo $image_info
 	 *
 	 * @since 0.1
@@ -134,6 +132,9 @@ class DisplayImages implements Helper_Interface_Actions, Helper_Interface_Filter
 	}
 
 	/**
+	 * If the Image Display setting is enabled, override the `fileupload` and `post_image` field types with our own
+	 * custom class.
+	 *
 	 * @param Helper_Abstract_Fields $class
 	 * @param object                 $field
 	 * @param array                  $entry
@@ -167,7 +168,7 @@ class DisplayImages implements Helper_Interface_Actions, Helper_Interface_Filter
 	}
 
 	/**
-	 * Output images at end of PDF (if any)
+	 * Group `fileupload` and `post_image` images at the end of the PDF if the Group Images setting is enabled
 	 *
 	 * @param $entry
 	 *
@@ -183,10 +184,8 @@ class DisplayImages implements Helper_Interface_Actions, Helper_Interface_Filter
 
 			foreach ( $form['fields'] as $field ) {
 				if ( $field->get_input_type() === 'fileupload' || $field->get_input_type() === 'post_image' ) {
-					/* Disable CSS Ready classes because grouped images are outside the normal document flow */
-					$field->cssClass = '';
-
-					$image_class = $this->maybe_autoload_class( null, $field, $entry );
+					$field->cssClass = ''; /* Disable CSS Ready classes because grouped images are outside the normal document flow */
+					$image_class     = $this->maybe_autoload_class( null, $field, $entry );
 
 					if ( $image_class->has_images() ) {
 						$container->generate( $field );

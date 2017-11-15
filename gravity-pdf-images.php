@@ -3,7 +3,7 @@
 /**
  * Plugin Name:     Gravity PDF Images
  * Plugin URI:      https://gravitypdf.com/shop/images-add-on/
- * Description:     TODO
+ * Description:     Adds support for uploaded Gravity Form images to be displayed in Core and Universal PDF templates. Images are automatically resized and can be displayed in one/two/three/four column layouts, or group together at end of PDF. Developers can easily use resized images in custom templates.
  * Author:          Gravity PDF
  * Author URI:      https://gravitypdf.com
  * Text Domain:     gravity-pdf-images
@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 */
 
 define( 'GFPDF_PDF_IMAGES_FILE', __FILE__ );
-define( 'GFPDF_PDF_IMAGES_VERSION', '1.0.2' );
+define( 'GFPDF_PDF_IMAGES_VERSION', '0.1' );
 
 /**
  * Class GPDF_Images_Checks

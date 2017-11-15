@@ -7,6 +7,7 @@ use GFPDF\Helper\Helper_Interface_Filters;
 use abeautifulsite\SimpleImage;
 
 use Exception;
+use GPDFAPI;
 
 /**
  * @package     Gravity PDF Images
@@ -55,6 +56,8 @@ class Resize implements Helper_Interface_Filters {
 	protected $image_info;
 
 	/**
+	 * Contains the value passed to SimpleImage's best_fit() method
+	 *
 	 * @var int
 	 *
 	 * @since 0.1
@@ -62,8 +65,6 @@ class Resize implements Helper_Interface_Filters {
 	protected $constraint;
 
 	/**
-	 * Resize constructor.
-	 *
 	 * @param ImageInfo $image_info
 	 * @param int       $constraint
 	 *
@@ -83,10 +84,24 @@ class Resize implements Helper_Interface_Filters {
 		$this->add_filters();
 	}
 
+	/**
+	 * @since 0.1
+	 */
 	public function add_filters() {
 		add_filter( 'gfpdf_queue_initialise', [ $this, 'queue_image_resize' ], 10, 3 );
 	}
 
+	/**
+	 * Queue up our image resize handlers when images are uploaded with the entry
+	 *
+	 * @param array $queue_data
+	 * @param array $entry
+	 * @param array $form
+	 *
+	 * @return array
+	 *
+	 * @since 0.1
+	 */
 	public function queue_image_resize( $queue_data, $entry, $form ) {
 		$files = $this->maybe_resize_images( $entry, $form );
 
@@ -102,8 +117,10 @@ class Resize implements Helper_Interface_Filters {
 	}
 
 	/**
-	 * @param $entry
-	 * @param $form
+	 * Gets the uploaded image files from the `fileupload` and `post_image` fields
+	 *
+	 * @param array $entry
+	 * @param array $form
 	 *
 	 * @since 0.1
 	 *
@@ -118,16 +135,47 @@ class Resize implements Helper_Interface_Filters {
 			return $field->get_input_type() === 'fileupload' || $field->get_input_type() === 'post_image';
 		} );
 
-		/* Resize our images (if any) */
+		/* Push all image paths onto an array */
 		foreach ( $upload_fields as $field ) {
-			$files_to_resize = array_merge( $files_to_resize, $this->get_upload_files( $field, $entry ) );
+			$files_to_resize = array_merge( $files_to_resize, $this->get_upload_images( $field, $entry ) );
 		}
 
 		return $files_to_resize;
 	}
 
 	/**
-	 * Resize image, if not already resized
+	 * Gets uploaded images for the current field
+	 *
+	 * @param array $field
+	 * @param array $entry
+	 *
+	 * @return array The image paths for the current field
+	 *
+	 * @since 0.1
+	 */
+	protected function get_upload_images( $field, $entry ) {
+		$files = $entry[ $field->id ];
+		$files = ( $field->multipleFiles ) ? (array) json_decode( $files ) : [ $files ];
+
+		/* If Post Image, force into the correct format for image processing */
+		if ( $field->get_input_type() === 'post_image' ) {
+			$image_data = explode( '|:|', $files[0] );
+			$files[0]   = $image_data[0];
+		}
+
+		/* Convert Urls to local paths */
+		$paths = array_map( function( $file ) {
+			return $this->image_info->get_file_path( $file );
+		}, $files );
+
+		/* Filter out non-images */
+		return array_filter( $paths, function( $path ) {
+			return $this->image_info->does_file_have_image_extension( $path );
+		} );
+	}
+
+	/**
+	 * Trigger an image resize, if not already done
 	 *
 	 * @param string $path
 	 *
@@ -140,7 +188,9 @@ class Resize implements Helper_Interface_Filters {
 	}
 
 	/**
-	 * @param string $path
+	 * Resize, auto orient and save image
+	 *
+	 * @param string $path The image to manipulate
 	 *
 	 * @since 0.1
 	 */
@@ -157,39 +207,13 @@ class Resize implements Helper_Interface_Filters {
 			    ->auto_orient()
 			    ->save( $resize_image_path );
 
-			unset( $img );
+			unset( $img ); /* destory the object to clear it from PHP's memory */
 		} catch ( Exception $e ) {
-			/* Log error */
+			$log = GPDFAPI::get_log_class();
+			$log->addError( 'Could not resize image', [
+				'image' => $path,
+				'error' => $e->getMessage(),
+			] );
 		}
-	}
-
-	/**
-	 * @param $field
-	 * @param $entry
-	 *
-	 * @return array
-	 *
-	 * @since 0.1
-	 */
-	protected function get_upload_files( $field, $entry ) {
-		$files = $entry[ $field->id ];
-		$files = ( $field->multipleFiles ) ? (array) json_decode( $files ) : [ $files ];
-
-		/* If Post Image, force into the correct format for image processing */
-		if ( $field->get_input_type() === 'post_image' ) {
-			$image_data = explode( '|:|', $files[0] );
-			$files[0]   = $image_data[0];
-		}
-
-		/* Convert Urls to local paths */
-		$paths = array_map( function( $file ) {
-			return $this->image_info->get_file_path( $file );
-		}, $files );
-
-		/* Filter out non-images */
-
-		return array_filter( $paths, function( $path ) {
-			return $this->image_info->does_file_have_image_extension( $path );
-		} );
 	}
 }

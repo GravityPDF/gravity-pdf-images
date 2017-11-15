@@ -56,26 +56,22 @@ class FormData implements Helper_Interface_Filters {
 	 * @since 0.1
 	 */
 	public function add_filters() {
-		add_filter( 'gfpdf_form_data', [ $this, 'add_image_order_key' ] );
+		add_filter( 'gfpdf_form_data_key_order', [ $this, 'add_image_order_key' ] );
 	}
 
 	/**
-	 * Put the `images` key at the end of the form_data array
+	 * Put the `images` key before the `poll` key in the $form_data array
 	 *
-	 * @param array $form_data
+	 * @param array $keys
 	 *
 	 * @return array
 	 *
 	 * @since 0.1
 	 */
-	public function add_image_order_key( $form_data ) {
-		if ( isset( $form_data['images'] ) ) {
-			$images = $form_data['images'];
-			unset( $form_data['images'] );
+	public function add_image_order_key( $keys ) {
+		$search_key = array_search( 'poll', $keys );
+		array_splice( $keys, $search_key, 0, 'images' );
 
-			$form_data['images'] = $images;
-		}
-
-		return $form_data;
+		return $keys;
 	}
 }

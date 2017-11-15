@@ -69,8 +69,6 @@ class DoesTemplateHaveGroup {
 	protected $log;
 
 	/**
-	 * AddFields constructor.
-	 *
 	 * @param Model_Form_Settings $form_settings
 	 * @param Helper_Templates    $templates
 	 * @param \Monolog\Logger     $log
@@ -84,6 +82,8 @@ class DoesTemplateHaveGroup {
 	}
 
 	/**
+	 * Determine if the current PDF template is part of the Core or Universal group
+	 *
 	 * @param string $template_name
 	 *
 	 * @return bool
@@ -107,6 +107,8 @@ class DoesTemplateHaveGroup {
 	}
 
 	/**
+	 * Get the current PDF template
+	 *
 	 * @return string
 	 *
 	 * @since 1.0
@@ -122,6 +124,8 @@ class DoesTemplateHaveGroup {
 	}
 
 	/**
+	 * Determine if the 'gfpdf_get_template_fields' AJAX event is currently being processed
+	 *
 	 * @return bool
 	 *
 	 * @since 1.0

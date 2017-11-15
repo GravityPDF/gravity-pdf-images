@@ -135,7 +135,7 @@ $plugin = apply_filters( 'gfpdf_images_initialise', new Bootstrap(
 	new Helper_Notices()
 ) );
 
-$plugin->set_edd_download_id( '' );
+$plugin->set_edd_download_id( 17205 );
 $plugin->set_addon_documentation_slug( 'shop-plugin-images-add-on' );
 $plugin->init();
 

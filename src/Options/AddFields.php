@@ -3,6 +3,7 @@
 namespace GFPDF\Plugins\Images\Options;
 
 use GFPDF\Plugins\Images\Shared\DoesTemplateHaveGroup;
+use GFPDF\Helper\Helper_Interface_Actions;
 use GFPDF\Helper\Helper_Interface_Filters;
 
 /**
@@ -42,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package GFPDF\Plugins\Images\Options
  */
-class AddFields implements Helper_Interface_Filters {
+class AddFields implements Helper_Interface_Filters, Helper_Interface_Actions {
 
 	/**
 	 * @var DoesTemplateHaveGroup
@@ -52,8 +53,6 @@ class AddFields implements Helper_Interface_Filters {
 	private $group_checker;
 
 	/**
-	 * AddFields constructor.
-	 *
 	 * @param DoesTemplateHaveGroup $group_checker
 	 *
 	 * @since 0.1
@@ -62,7 +61,6 @@ class AddFields implements Helper_Interface_Filters {
 		$this->group_checker = $group_checker;
 	}
 
-
 	/**
 	 * Initialise our module
 	 *
@@ -70,12 +68,14 @@ class AddFields implements Helper_Interface_Filters {
 	 */
 	public function init() {
 		$this->add_filters();
+		$this->add_actions();
+	}
 
-		add_action( 'gfpdf_uploaded_images_js', function( $args ) {
-			echo '<script type="text/javascript">' .
-			     file_get_contents( __DIR__ . '/../Javascript/enhanced-images-settings.js' ) .
-			     '</script>';
-		} );
+	/**
+	 * @since 0.1
+	 */
+	public function add_actions() {
+		add_action( 'gfpdf_uploaded_images_js', [ $this, 'load_upload_images_inline_js' ] );
 	}
 
 	/**
@@ -86,7 +86,19 @@ class AddFields implements Helper_Interface_Filters {
 	}
 
 	/**
-	 * Include the field label settings for Core and Universal templates
+	 * Load JS from file, strip all new line characters and output (inline JS)
+	 *
+	 * @since 0.1
+	 */
+	public function load_upload_images_inline_js() {
+		$js = file_get_contents( __DIR__ . '/../Javascript/enhanced-images-settings.js' );
+		$js = trim( preg_replace( '/\s+/', ' ', $js ) );
+
+		echo '<script type="text/javascript">' . $js . '</script>';
+	}
+
+	/**
+	 * Include the image template settings for Core and Universal templates
 	 *
 	 * @param array $settings
 	 *
@@ -95,10 +107,9 @@ class AddFields implements Helper_Interface_Filters {
 	 * @since 0.1
 	 */
 	public function add_template_option( $settings ) {
-		$override          = apply_filters( 'gfpdf_override_enhanced_images_fields', false, $settings ); /* Change this to true to override the core / universal check */
-		$exclude_templates = apply_filters( 'gfpdf_excluded_templates_enhanced_images', [], $settings ); /* Exclude this option for specific templates */
+		$override = apply_filters( 'gfpdf_override_enhanced_images_fields', false, $settings ); /* Change this to true to override the core / universal check */
 
-		if ( ! in_array( $this->group_checker->get_template_name(), $exclude_templates ) && ( $override || $this->group_checker->has_group() ) ) {
+		if ( $override || $this->group_checker->has_group() ) {
 			$settings['display_uploaded_images'] = [
 				'id'      => 'display_uploaded_images',
 				'name'    => esc_html__( 'Display Uploaded Images', 'gravity-pdf-images' ),

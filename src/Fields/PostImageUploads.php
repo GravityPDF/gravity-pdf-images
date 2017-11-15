@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 */
 
 /**
- * Controls the display and output of the Checkbox HTML
+ * Controls the display and output of the Post Image field
  *
  * @since 0.1
  */
@@ -55,13 +55,15 @@ class PostImageUploads extends Field_Post_Image {
 	protected $image_info;
 
 	/**
-	 * @var array
+	 * @var array The current Gravity PDF settings
 	 *
 	 * @since 0.1
 	 */
 	protected $pdf_settings;
 
 	/**
+	 * image_info Setter
+	 *
 	 * @param ImageInfo $image_info
 	 *
 	 * @since 0.1
@@ -71,6 +73,8 @@ class PostImageUploads extends Field_Post_Image {
 	}
 
 	/**
+	 * pdf_settings Setter
+	 *
 	 * @param $settings
 	 *
 	 * @since 0.1
@@ -79,37 +83,20 @@ class PostImageUploads extends Field_Post_Image {
 		$this->pdf_settings = $settings;
 	}
 
+	/**
+	 * pdf_settings Getter
+	 *
+	 * @return array
+	 *
+	 * @since 0.1
+	 */
 	public function get_pdf_settings() {
 		return $this->pdf_settings;
 	}
 
 	/**
-	 * Include all checkbox options in the list and tick the ones that were selected
+	 * Mark field as empty if the Group Images setting is enabled. Otherwise, let the parent class determine if the field is empty.
 	 *
-	 * @param string $value
-	 * @param bool   $label
-	 *
-	 * @return string
-	 *
-	 * @since 0.1
-	 */
-	public function html( $value = '', $label = true ) {
-		$image = $this->value();
-		$html  = '';
-
-		$should_group_images = ( isset( $this->pdf_settings['group_uploaded_images'] ) ) ? $this->pdf_settings['group_uploaded_images'] : 'No';
-		if ( isset( $image['path'] ) && is_file( $image['path'] ) && $should_group_images === 'No' ) {
-			$html .= $this->get_image_html( $image );
-		}
-
-		if ( $should_group_images === 'Yes' ) {
-			return '';
-		}
-
-		return Helper_Abstract_Fields::html( $html );
-	}
-
-	/**
 	 * @return bool
 	 *
 	 * @since 0.1
@@ -125,6 +112,11 @@ class PostImageUploads extends Field_Post_Image {
 	}
 
 	/**
+	 * If the field has an uploaded image and it has been resized already we'll include the resized image URL and path
+	 * in the $form_data['images'] array.
+	 *
+	 * @return array
+	 *
 	 * @since 0.1
 	 */
 	public function form_data() {
@@ -136,6 +128,7 @@ class PostImageUploads extends Field_Post_Image {
 
 			$resized_image_path = $this->image_info->get_image_resized_filepath( $image['path'] );
 
+			/* Only include the new form_data info if the resized image exists */
 			if ( is_file( $resized_image_path ) ) {
 				$resized_image_url = $this->image_info->get_image_resized_filepath( $image['url'] );
 
@@ -144,6 +137,7 @@ class PostImageUploads extends Field_Post_Image {
 					'path' => $resized_image_path,
 				];
 
+				/* Merge the new `image` data with this fields standard form_data */
 				return array_merge(
 					parent::form_data(),
 					[ 'images' => $data ]
@@ -151,10 +145,13 @@ class PostImageUploads extends Field_Post_Image {
 			}
 		}
 
+		/* No images uploaded so let the parent class handle the output */
 		return parent::form_data();
 	}
 
 	/**
+	 * Determine if an image was uploaded for this field
+	 *
 	 * @return bool
 	 *
 	 * @since 0.1
@@ -166,6 +163,36 @@ class PostImageUploads extends Field_Post_Image {
 	}
 
 	/**
+	 * Handle the field's HTML output for the image
+	 *
+	 * @param string $value
+	 * @param bool   $label
+	 *
+	 * @return string
+	 *
+	 * @since 0.1
+	 */
+	public function html( $value = '', $label = true ) {
+		$image = $this->value();
+		$html  = '';
+
+		/* Generate image markup if images aren't grouped at the end of the PDF */
+		$should_group_images = ( isset( $this->pdf_settings['group_uploaded_images'] ) ) ? $this->pdf_settings['group_uploaded_images'] : 'No';
+		if ( $should_group_images === 'No' && isset( $image['path'] ) && is_file( $image['path'] ) ) {
+			$html .= $this->get_image_html( $image );
+		}
+
+		/* Don't display any content if images are grouped at the end of the document (handles "Show Empty Fields" edge case) */
+		if ( $should_group_images === 'Yes' ) {
+			return '';
+		}
+
+		return Helper_Abstract_Fields::html( $html );
+	}
+
+	/**
+	 * Generate the field's image markup (used when the Group Images setting is enabled)
+	 *
 	 * @return string
 	 *
 	 * @since 0.1
@@ -178,7 +205,9 @@ class PostImageUploads extends Field_Post_Image {
 	}
 
 	/**
-	 * @param $image
+	 * Returns the markup used to display images
+	 *
+	 * @param array $image
 	 *
 	 * @return string
 	 *
@@ -217,6 +246,8 @@ class PostImageUploads extends Field_Post_Image {
 	}
 
 	/**
+	 * Get the correct CSS class name based on the Image Format setting
+	 *
 	 * @return string
 	 *
 	 * @since 0.1
